@@ -1,83 +1,67 @@
-# VITALFLOW AI: 5-Minute Project Demonstration Script
-## Step-by-Step Viva & Lab Evaluation Walkthrough
+# VITALFLOW AI: 5-Minute Presentation & Demo Script
+## Clean Walkthrough for College Viva & Lab Evaluation
 
-Follow this exact walkthrough when presenting VitalFlow AI to your professor or external examiner. It is structured to take 5 to 7 minutes, showcase all core AI algorithms, and demonstrate total command over your syllabus concepts.
-
----
-
-### Phase 1: The Hook & Introduction (60 Seconds)
-1. **Open the Streamlit Application** in your browser (`http://localhost:8501`).
-2. **Point to the Hero Banner at the top:**
-   > *"Good morning, respected professors. Today, I am presenting **VitalFlow AI**, an Autonomous Hospital Operations and Emergency Logistics Command System developed for our 5th-Semester B.Tech AI & Data Science Minor Project."*
-3. **Connect directly to the Syllabus:**
-   > *"Rather than building common college projects like Tic-Tac-Toe or a basic chatbot, VitalFlow AI implements five foundational AI paradigms directly from our AI Lab practical syllabus—including A\* Search (P4), Greedy Best-First Search (P3), Model-Based Reflex Agents (P2), Constraint Satisfaction with Min-Conflicts (P5), Propositional Forward Chaining (P7), and Partial Order Planning (P10)—unified to solve the real-world healthcare crisis of emergency response and hospital resource bottlenecks."*
+Follow this walkthrough when demonstrating VitalFlow AI to your professor or external examiner. It is structured to take 5 to 7 minutes, highlight all core AI algorithms, and demonstrate total command over your syllabus concepts.
 
 ---
 
-### Phase 2: Emergency Ambulance Route Planner (90 Seconds)
-1. **Navigate to:** `🚑 Emergency Ambulance Route Planner` in the sidebar.
-2. **Show the Map & Controls:**
-   > *"Here in Module 1, an emergency ambulance must reach AIIMS Nagpur from Sitabuldi during peak rush hour. The network represents real Nagpur healthcare nodes."*
-3. **Explain the Search Algorithms:**
+### Step 1: Executive Overview (60 Seconds)
+1. **Open the Application** in your browser (`http://localhost:8501`).
+2. **Point to the Header and KPI Cards:**
+   > *"Good morning, respected professors. Today, I am demonstrating **VitalFlow AI**, an Autonomous Hospital Operations and Emergency Logistics Platform."*
+   > *"Rather than building common toy projects like Tic-Tac-Toe or a basic chatbot, VitalFlow AI implements five foundational AI paradigms directly from our AI Lab syllabus to solve urban emergency healthcare challenges during the critical **Golden Hour**."*
+3. **Show the Map Overview:**
+   > *"Our dashboard models 14 interconnected healthcare facilities and transit nodes across Nagpur with 371 total ICU beds and live traffic multipliers."*
+
+---
+
+### Step 2: Emergency Route Planner (90 Seconds)
+1. **Click on:** `Emergency Route Planner` in the sidebar.
+2. **Explain the Search Algorithms:**
+   * Origin: `Sitabuldi` $\to$ Destination: `AIIMS_Nagpur`.
    * Point to the metric cards showing **A\* Search** (25.23 min), **Greedy Best-First** (27.88 min), and **Dijkstra** (25.23 min).
-   > *"Notice the difference between A\* and Greedy Best-First. A\* uses $f(n) = g(n) + h(n)$ with an admissible Euclidean heuristic divided by max road speed. It guarantees the mathematically optimal path of 25.23 minutes.*
-   > *Greedy Best-First, however, uses only $f(n) = h(n)$ and ignores path cost $g(n)$. It was lured into a local shortcut through congested central roads, resulting in a suboptimal detour of 27.88 minutes."*
-4. **Live Interactive Feature:**
-   * Toggle **"Simulate Wardha Road Construction Closure"** in the sidebar.
-   * Click **🚀 Calculate Emergency Routes**.
-   * Show how the map dynamically turns the road red and A\* reroutes through alternative arterial corridors without failing!
-5. **Open the Expander:**
-   * Expand **"Step-by-Step Search Decision Log"** to show the exact priority queue evaluation order and $g(n)$, $h(n)$, $f(n)$ values.
+   > *"Here in Module 1, an ambulance must reach AIIMS Nagpur. We compare A\* with Greedy Best-First Search.*
+   > *A\* uses $f(n) = g(n) + h(n)$ with an admissible Euclidean time heuristic ($h(n) \le h^*(n)$). It guarantees the optimal path of 25.23 minutes.*
+   > *Greedy Best-First uses only $f(n) = h(n)$ and ignores path cost $g(n)$. It was lured into a local shortcut through congested central roads, resulting in a suboptimal detour of 27.88 minutes."*
+3. **Demonstrate Dynamic Obstacle Avoidance:**
+   * Check **"Simulate Wardha Road Closure"** in the sidebar.
+   * Click **Calculate Optimal Routes**.
+   * Show how the map highlights the road closure in red, and A\* automatically reroutes via the Outer Ring Road in 25.97 minutes!
 
 ---
 
-### Phase 3: ICU Patient Telemetry Monitor (60 Seconds)
-1. **Navigate to:** `🩺 ICU Patient Telemetry Agent` in the sidebar.
-2. **Select Patient Case:** Choose **P-101 (Rajesh Sharma - Post-Cholecystectomy / Sepsis)**.
-3. **Move the Inspection Slider to Time Step 3 (08:30):**
-   > *"In Module 2, we compare the Simple Reflex Agent from Practical 1 with the Model-Based Reflex Agent from Practical 2."*
-4. **Point to the Side-by-Side Comparison:**
-   > *"Notice what happens at 08:30: The patient is developing early septic shock. The Simple Reflex Agent looks only at the immediate reading with no memory ($S_t = \emptyset$) and merely issues a mild caution.*
-   > *However, our Model-Based Reflex Agent maintains an internal state representation across rolling time intervals ($S_{t+1} = \text{UpdateState}(S_t, P_{t+1})$). It calculates that the Shock Index (Heart Rate divided by Systolic BP) has climbed above 1.0, detects a multi-interval downward deterioration vector, and immediately triggers a Tier-3 Code Blue alert 30 minutes earlier than the threshold-based monitor."*
-5. **Show False Alarm Handling:**
-   * Select **P-103 (Anil Deshmukh)**.
-   * Show how a temporary anxiety spike at 08:15 tricked the Simple Reflex Agent into alarming, while the Model-Based Agent recognized it as a transient spike and suppressed alarm fatigue.
+### Step 3: Hospital Operations Command (90 Seconds)
+1. **Click on:** `Hospital Operations` in the sidebar.
+2. **Sub-Tab 1: ICU Telemetry Monitoring (Practical 2 & 1):**
+   * Select **P-101 (Rajesh Sharma - Sepsis Progression)**.
+   * Move the slider to **Step 3 (08:30)**.
+   > *"Here we compare the Simple Reflex Agent from Practical 1 with the Model-Based Reflex Agent from Practical 2.*
+   > *At 08:30, the patient's vitals are drifting. The Simple Reflex Agent acts only on current percepts without memory ($S = \emptyset$) and merely issues a mild caution.*
+   > *Our Model-Based Reflex Agent maintains an internal state representation across rolling time windows ($S_{t+1} = \text{UpdateState}(S_t, P_{t+1})$). It calculates that the Shock Index (Heart Rate / Systolic BP) has climbed above 1.0, detects a downward deterioration vector, and triggers a Code Blue alert 30 minutes earlier than standard threshold monitors."*
+   * Quickly switch to **P-103 (Anil Deshmukh)** to show how the Model-Based Agent recognizes a temporary anxiety spike and suppresses false alarms!
+3. **Sub-Tab 2: Staff Duty Scheduling (Practical 5):**
+   * Explain: Variables = Shift Slots, Domains = Doctors, Constraints = No Double Booking, Specialty Eligibility.
+   * Click **"Solve Roster with Min-Conflicts"**.
+   * Point out the convergence curve driving violations down to zero within milliseconds, outputting a conflict-free roster table!
+4. **Sub-Tab 3: Emergency Triage Inference (Practical 7 & 8):**
+   * Select preset: **Acute STEMI Heart Attack**.
+   * Show the forward-chaining proof trace: Modus Ponens firing Horn clauses to deduce **ESI Level 2 Emergent** and routing to the Critical Care Bay.
 
 ---
 
-### Phase 4: Medical Staff & Bed CSP Allocator (60 Seconds)
-1. **Navigate to:** `🧩 Medical Staff & Bed CSP Allocator` in the sidebar.
-2. **Explain the Formulation:**
-   > *"Module 3 formulates hospital shift scheduling as a formal Constraint Satisfaction Problem $(X, D, C)$, directly mapping to Practical 5.*
-   > *Variables $X$ are the 10 emergency shift slots; Domains $D$ are available specialists; Constraints $C$ prevent concurrent double-booking, enforce specialty requirements, and restrict consecutive night shift fatigue."*
-3. **Click "⚡ Solve Schedule with Min-Conflicts":**
-   * Point to the interactive **Plotly convergence curve**.
-   > *"The Min-Conflicts local search algorithm begins with a random assignment of high conflicts and heuristically repairs the most conflicted variable in each iteration, driving total constraint violations down to zero within milliseconds."*
-   * Show the resulting clean duty roster table below with zero double-bookings!
+### Step 4: AI Insights & Partial Order Planning (60 Seconds)
+1. **Click on:** `AI Insights & Algorithms` in the sidebar.
+2. **Show Partial Order Planning (Practical 10):**
+   > *"In Practical 10, we studied Partial Order Planning. In trauma resuscitation, linear planning ($A_1 \to A_2 \to A_3$) causes fatal delays.*
+   > *POP identifies causal links and open preconditions. Notice the Gantt timeline: Resuscitation nurses place IV lines while scrub technicians simultaneously sterilize laparotomy instruments in parallel stages, compressing the critical path to 58 minutes."*
+3. **Show Complexity Table:**
+   * Point out the asymptotic comparison ($O(b^d)$, completeness, and admissibility).
 
 ---
 
-### Phase 5: Clinical Triage & Proof Engine (45 Seconds)
-1. **Navigate to:** `⚖️ Clinical Triage & Proof Engine` in the sidebar.
-2. **Select Scenario Preset:** Choose **"Acute ST-Elevation Myocardial Infarction (STEMI)"**.
-3. **Show the Deduction Trace:**
-   > *"In Module 4, we implement Propositional Horn-Clause Forward Chaining (Practical 7). When chest pain, diaphoresis, and unstable vitals are asserted, Modus Ponens fires Rule R5 to deduce acute coronary syndrome, which triggers Rule R6 to deduce ESI Level 2 Emergent and routes the patient directly to the Critical Care Bay.*
-   > *In the second tab, we implement the First-Order Logic Unification algorithm (Practical 8) to find the Most General Unifier (MGU $\theta$) matching patient care needs with attending doctor attributes."*
-
----
-
-### Phase 6: Trauma Protocol Partial Order Planner (45 Seconds)
-1. **Navigate to:** `⏱️ Trauma Protocol Partial Order Planner` in the sidebar.
-2. **Explain the Difference from Linear Planning:**
-   > *"In Practical 10, we studied Partial Order Planning. In emergency trauma surgery, forcing all actions into a single linear sequence causes fatal delays.*
-   > *Our POP planner identifies causal links and open preconditions. Notice the Gantt chart: Stage 2 executes IV line placement and surgical instrument sterilization simultaneously in parallel streams by different clinical teams, compressing the overall resuscitation timeline to just 58 minutes."*
-
----
-
-### Phase 7: Benchmarks & Viva Guide (30 Seconds)
-1. **Navigate to:** `📊 Algorithmic Benchmarks & Complexity`.
-   * Point out the asymptotic time and space complexity comparison table ($O(b^d)$, admissibility, completeness).
-2. **Navigate to:** `🎓 Viva Preparation & Project Guide`.
-   * Show the embedded **Architecture Diagram** and the **Top 25 Viva Questions & Answers** accordion ready inside the app.
-3. **Concluding Statement:**
-   > *"Every single algorithm in VitalFlow AI was implemented cleanly in Python from first principles, verified with automated unit tests, and packaged into a deployable Streamlit application. Thank you, professors. I am now open to your questions."*
+### Step 5: Viva Preparation Companion & Conclusion (30 Seconds)
+1. **Click on:** `Viva Preparation` in the sidebar.
+2. **Show the 30 Viva Questions & Syllabus Table:**
+   > *"Everything in this project—every formula, algorithm, and syllabus experiment—is thoroughly documented in this built-in defense companion with 30 high-yield questions."*
+3. **Closing Statement:**
+   > *"Every algorithm in VitalFlow AI was implemented cleanly in standard Python from first principles, tested with 100% automated test coverage, and deployed as a responsive SaaS interface. Thank you, professors. I am ready for your questions."*

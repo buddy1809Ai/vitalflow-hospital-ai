@@ -1,77 +1,72 @@
 """
 components.py
 =============
-Reusable UI widgets, alert containers, metric panels, and academic callouts.
+Clean, professional UI components for VitalFlow AI.
+Designed for clarity, usability, and executive SaaS presentation.
 """
 
 import streamlit as st
-from typing import Dict, Any, List
+from typing import Dict, List, Any
 
-def render_hero_banner():
-    """Renders the top executive command center banner."""
+def render_top_header():
+    """Renders the executive SaaS top navigation bar."""
     st.markdown("""
-    <div class="hero-banner">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+    <div class="saas-header">
+        <div class="saas-brand">
+            <div class="saas-logo-icon">V</div>
             <div>
-                <h1 class="hero-title">VITALFLOW AI</h1>
-                <p class="hero-subtitle">
-                    Autonomous Hospital Operations & Emergency Logistics Command System<br>
-                    <span style="color: #cbd5e1; font-size: 0.86rem;">
-                        Multi-Agent Decision Support & State-Space Optimization Engine
-                    </span>
-                </p>
-            </div>
-            <div style="text-align: right; margin-top: 4px;">
-                <span class="hero-pill live">● SYSTEM OPERATIONAL</span>
-                <span class="hero-pill academic">B.Tech AI & DS Minor Project</span>
+                <div class="saas-title">VitalFlow AI</div>
+                <div class="saas-tagline">Autonomous Hospital Operations & Emergency Logistics Platform</div>
             </div>
         </div>
-        <div class="hero-badge-row">
-            <span class="hero-pill">⚡ A* vs Greedy Search (P3, P4, P9)</span>
-            <span class="hero-pill">🩺 Model-Based Reflex Telemetry (P1, P2)</span>
-            <span class="hero-pill">🧩 CSP Min-Conflicts Duty (P5)</span>
-            <span class="hero-pill">⚖️ Propositional Triage Logic (P7, P8)</span>
-            <span class="hero-pill">⏱️ Partial Order Planning (P10)</span>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>Simulation Mode Active</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-def render_kpi_row(metrics: List[Dict[str, str]]):
-    """Renders a responsive row of SaaS metric cards."""
+def render_kpi_cards(metrics: List[Dict[str, str]]):
+    """Renders a balanced, responsive row of executive KPI metric cards."""
     cols = st.columns(len(metrics))
     for i, col in enumerate(cols):
         m = metrics[i]
         with col:
             st.markdown(f"""
-            <div class="metric-card">
-                <div class="metric-title">{m.get('title', 'Metric')}</div>
-                <div class="metric-value">{m.get('value', '0')}</div>
-                <div class="metric-sub">{m.get('sub', '')}</div>
+            <div class="kpi-card">
+                <div class="kpi-label">{m.get('label', 'Metric')}</div>
+                <div class="kpi-value">{m.get('value', '0')}</div>
+                <div class="kpi-context">{m.get('context', '')}</div>
             </div>
             """, unsafe_allow_html=True)
 
-def render_alert_strip(message: str, level: str = "blue"):
-    """Renders a custom colored alert strip."""
-    cls_map = {
-        "red": "alert-strip-red",
-        "green": "alert-strip-green",
-        "blue": "alert-strip-blue"
+def render_banner(message: str, level: str = "info"):
+    """Renders a clean, purposeful notification strip."""
+    class_map = {
+        "info": "info-strip",
+        "warning": "warning-strip",
+        "success": "success-strip",
+        "danger": "danger-strip"
     }
-    cls_name = cls_map.get(level, "alert-strip-blue")
+    cls_name = class_map.get(level, "info-strip")
     st.markdown(f"""
     <div class="{cls_name}">
         {message}
     </div>
     """, unsafe_allow_html=True)
 
-def render_syllabus_badge(practical_num: int, practical_title: str, ai_concept: str):
-    """Displays an academic citation badge linking directly to the syllabus."""
+def render_syllabus_pill(practical_id: str, title: str):
+    """Renders a discreet syllabus reference tag."""
     st.markdown(f"""
-    <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
-        <div>
-            <strong style="color: #1e293b; font-size: 0.85rem;">Syllabus Mapping: Practical {practical_num}</strong>
-            <span style="color: #64748b; font-size: 0.82rem; margin-left: 8px;">{practical_title}</span>
-        </div>
-        <span class="algo-tag optimal">{ai_concept}</span>
+    <div style="margin-bottom: 12px;">
+        <span class="syllabus-pill">{practical_id}: {title}</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_academic_disclaimer():
+    """Renders the standard academic simulation disclaimer."""
+    st.markdown("""
+    <div class="academic-disclaimer">
+        <strong>Academic Demonstration Note:</strong> VitalFlow AI is an educational project illustrating classical and heuristic AI algorithms (A*, CSP, Reflex Agents, Horn-Clause Logic, POP) on simulated urban hospital datasets. Not for clinical diagnostic use.
     </div>
     """, unsafe_allow_html=True)
