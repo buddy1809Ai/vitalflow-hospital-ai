@@ -1,7 +1,7 @@
 # VITALFLOW AI: 5-Minute Presentation & Demo Script
-## Clean Walkthrough for College Viva & Lab Evaluation
+## Clean Walkthrough for College Evaluation
 
-Follow this walkthrough when demonstrating VitalFlow AI to your professor or external examiner. It is structured to take 5 minutes, highlight all core AI algorithms, and demonstrate total command over your syllabus concepts.
+Follow this walkthrough when demonstrating VitalFlow AI to your professor or examiner. It is structured to take 5 minutes, highlight all core AI algorithms, and demonstrate total command over your syllabus concepts.
 
 ---
 
@@ -10,12 +10,12 @@ Follow this walkthrough when demonstrating VitalFlow AI to your professor or ext
 2. **Point to the Header and KPI Cards:**
    > *"Good morning, respected professors. Today, I am demonstrating **VitalFlow AI**, an Autonomous Hospital Operations and Emergency Logistics Platform."*
    > *"Rather than building common toy projects like Tic-Tac-Toe or a basic chatbot, VitalFlow AI implements five foundational AI paradigms directly from our AI Lab syllabus to solve urban emergency healthcare challenges during the critical **Golden Hour**."*
-3. **Show the Map Overview:**
+3. **Show the Spatial Grid & Workflow:**
    > *"Our dashboard models 14 interconnected healthcare facilities and transit nodes across Nagpur with 371 total ICU beds and dynamic traffic multipliers."*
 
 ---
 
-### Step 2: Emergency Route Planner (90 Seconds)
+### Step 2: Emergency Route Planner — Hero Feature (90 Seconds)
 1. **Click on:** `Emergency Route Planner` in the sidebar.
 2. **Explain the Search Algorithms:**
    * Origin: `Sitabuldi` $\to$ Destination: `AIIMS_Nagpur`.
@@ -30,7 +30,7 @@ Follow this walkthrough when demonstrating VitalFlow AI to your professor or ext
 
 ---
 
-### Step 3: Hospital Operations (2 Minutes)
+### Step 3: Hospital Operations Command (2 Minutes)
 Click on `Hospital Operations` in the sidebar. It contains 3 clear operational modules:
 
 #### Tab 1: ICU Patient Monitoring (Practical 2 & 1)
@@ -54,5 +54,7 @@ Click on `Hospital Operations` in the sidebar. It contains 3 clear operational m
 
 ---
 
-### Step 4: Closing Statement (30 Seconds)
-> *"Every algorithm in VitalFlow AI was implemented cleanly in standard Python from first principles, tested with 100% automated test coverage, and structured as a clean SaaS interface. Thank you, professors. I am ready for your questions."*
+### Step 4: AI Insights & Closing Statement (30 Seconds)
+1. **Click on:** `AI Insights & Algorithms` in the sidebar.
+2. **Point to the Complexity Table & Formulas:**
+   > *"Every algorithm in VitalFlow AI—A*, Model-Based Reflex Agents, Min-Conflicts CSP, Horn Logic Forward Chaining, and Partial Order Planning—was implemented cleanly in standard Python from first principles, tested with 100% automated test coverage, and structured as a clean SaaS interface. Thank you, professors. I am ready for your questions."*

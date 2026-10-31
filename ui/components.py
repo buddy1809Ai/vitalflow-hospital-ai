@@ -11,11 +11,14 @@ from typing import Dict, List, Any
 
 def render_html(html_str: str):
     """
-    Renders HTML safely in Streamlit by stripping leading indentation.
-    Prevents markdown parsers from mistaking indented HTML for <pre><code> blocks.
+    Renders HTML safely in Streamlit:
+    1. Dedents all leading indentation so markdown never mistakes HTML for indented code blocks.
+    2. Strips internal empty blank lines so CommonMark never terminates the HTML block early.
     """
     clean_html = textwrap.dedent(html_str).strip()
-    st.markdown(clean_html, unsafe_allow_html=True)
+    non_empty_lines = [line.strip() for line in clean_html.splitlines() if line.strip()]
+    safe_html = "".join(non_empty_lines)
+    st.markdown(safe_html, unsafe_allow_html=True)
 
 def render_top_header():
     """Renders the executive SaaS top navigation bar."""
