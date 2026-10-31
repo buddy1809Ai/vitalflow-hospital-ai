@@ -2,15 +2,24 @@
 components.py
 =============
 Clean, professional UI components for VitalFlow AI.
-Designed for clarity, usability, and executive SaaS presentation.
+Ensures 100% reliable HTML rendering without markdown code block escaping.
 """
 
 import streamlit as st
+import textwrap
 from typing import Dict, List, Any
+
+def render_html(html_str: str):
+    """
+    Renders HTML safely in Streamlit by stripping leading indentation.
+    Prevents markdown parsers from mistaking indented HTML for <pre><code> blocks.
+    """
+    clean_html = textwrap.dedent(html_str).strip()
+    st.markdown(clean_html, unsafe_allow_html=True)
 
 def render_top_header():
     """Renders the executive SaaS top navigation bar."""
-    st.markdown("""
+    render_html("""
     <div class="saas-header">
         <div class="saas-brand">
             <div class="saas-logo-icon">V</div>
@@ -24,7 +33,7 @@ def render_top_header():
             <span>Simulation Mode Active</span>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 def render_kpi_cards(metrics: List[Dict[str, str]]):
     """Renders a balanced, responsive row of executive KPI metric cards."""
@@ -32,13 +41,13 @@ def render_kpi_cards(metrics: List[Dict[str, str]]):
     for i, col in enumerate(cols):
         m = metrics[i]
         with col:
-            st.markdown(f"""
+            render_html(f"""
             <div class="kpi-card">
                 <div class="kpi-label">{m.get('label', 'Metric')}</div>
                 <div class="kpi-value">{m.get('value', '0')}</div>
                 <div class="kpi-context">{m.get('context', '')}</div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
 def render_banner(message: str, level: str = "info"):
     """Renders a clean, purposeful notification strip."""
@@ -49,24 +58,24 @@ def render_banner(message: str, level: str = "info"):
         "danger": "danger-strip"
     }
     cls_name = class_map.get(level, "info-strip")
-    st.markdown(f"""
+    render_html(f"""
     <div class="{cls_name}">
         {message}
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 def render_syllabus_pill(practical_id: str, title: str):
     """Renders a discreet syllabus reference tag."""
-    st.markdown(f"""
-    <div style="margin-bottom: 12px;">
+    render_html(f"""
+    <div style="margin-bottom: 14px;">
         <span class="syllabus-pill">{practical_id}: {title}</span>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
 def render_academic_disclaimer():
     """Renders the standard academic simulation disclaimer."""
-    st.markdown("""
+    render_html("""
     <div class="academic-disclaimer">
-        <strong>Academic Demonstration Note:</strong> VitalFlow AI is an educational project illustrating classical and heuristic AI algorithms (A*, CSP, Reflex Agents, Horn-Clause Logic, POP) on simulated urban hospital datasets. Not for clinical diagnostic use.
+        <strong>Academic Demonstration Note:</strong> VitalFlow AI is an educational platform illustrating classical and heuristic AI algorithms (A*, CSP, Reflex Agents, Horn Logic, POP) on simulated urban hospital datasets. Not for real clinical emergency dispatch or diagnostic use.
     </div>
-    """, unsafe_allow_html=True)
+    """)

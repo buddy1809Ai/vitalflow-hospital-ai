@@ -1,8 +1,8 @@
 """
 visualizers.py
 ==============
-Polished Plotly visualizers for VitalFlow AI.
-Clean typography, high-contrast palette, and responsive layouts.
+High-definition Plotly visualizers for VitalFlow AI.
+Guaranteed high contrast, robust type handling, and crisp SaaS styling.
 """
 
 import plotly.graph_objects as go
@@ -28,14 +28,14 @@ def plot_hospital_network(
     blocked_set = set(blocked_edges) | set((v, u) for u, v in blocked_edges)
     fig = go.Figure()
 
-    # 1. Base Road Network
+    # 1. Base Road Segments
     for u, v, dist, speed in ROAD_EDGES:
         x0, y0 = HOSPITAL_NODES[u]["x"], HOSPITAL_NODES[u]["y"]
         x1, y1 = HOSPITAL_NODES[v]["x"], HOSPITAL_NODES[v]["y"]
 
         is_blocked = (u, v) in blocked_set
-        line_color = "#f43f5e" if is_blocked else "#e2e8f0"
-        line_width = 3.0 if is_blocked else 1.8
+        line_color = "#ef4444" if is_blocked else "#cbd5e1"
+        line_width = 3.5 if is_blocked else 2.0
         dash_style = "dot" if is_blocked else "solid"
 
         fig.add_trace(go.Scatter(
@@ -44,7 +44,7 @@ def plot_hospital_network(
             mode="lines",
             line=dict(color=line_color, width=line_width, dash=dash_style),
             hoverinfo="text",
-            text=f"Road: {u} ↔ {v}<br>Distance: {dist} km | Speed Limit: {speed} km/h{' (ROAD BLOCKED)' if is_blocked else ''}",
+            text=f"Road Link: {u} ↔ {v}<br>Distance: {dist} km | Speed Limit: {speed} km/h{' [ROAD BLOCKED]' if is_blocked else ''}",
             showlegend=False
         ))
 
@@ -60,7 +60,7 @@ def plot_hospital_network(
             mode="lines+markers",
             line=dict(color="#f59e0b", width=3.5, dash="dash"),
             marker=dict(size=8, color="#d97706"),
-            name="Greedy Best-First Route (f = h)",
+            name="Greedy Best-First (f = h)",
             hoverinfo="name"
         ))
 
@@ -87,23 +87,23 @@ def plot_hospital_network(
         node_y.append(v["y"])
         
         if "AIIMS" in k or "GMC" in k:
-            color = "#dc2626"  # Apex Trauma Center
+            color = "#dc2626"  # Apex Emergency Trauma Center
             size = 18
         elif v.get("trauma_ready", False):
-            color = "#0284c7"  # Tertiary Care
+            color = "#0284c7"  # Tertiary Care Center
             size = 14
         else:
-            color = "#64748b"  # Transit Outpost
+            color = "#475569"  # Transit Node / Clinic
             size = 10
 
         node_color.append(color)
         node_size.append(size)
         node_text.append(
             f"<b>{v['name']}</b><br>"
-            f"Classification: {v['type']}<br>"
+            f"Type: {v['type']}<br>"
             f"ICU Bed Capacity: {v['icu_beds']}<br>"
             f"Trauma Facility: {'Yes' if v['trauma_ready'] else 'No'}<br>"
-            f"Grid Position: ({v['x']}, {v['y']})"
+            f"Grid Coord: ({v['x']}, {v['y']})"
         )
 
     fig.add_trace(go.Scatter(
@@ -117,21 +117,21 @@ def plot_hospital_network(
         ),
         text=[k for k in HOSPITAL_NODES.keys()],
         textposition="top center",
-        textfont=dict(size=10, color="#334155", family="Inter"),
+        textfont=dict(size=11, color="#0f172a", family="Plus Jakarta Sans, sans-serif"),
         hoverinfo="text",
         hovertext=node_text,
         name="Hospitals & Junctions"
     ))
 
     fig.update_layout(
-        title="Urban Healthcare Transit Network Topology (Nagpur)",
-        title_font=dict(size=14, color="#0f172a", family="Inter"),
-        plot_bgcolor="#fafafa",
+        title="Nagpur Healthcare Transit Topology & Dispatch Grid",
+        title_font=dict(size=14, color="#0f172a", family="Plus Jakarta Sans, sans-serif"),
+        plot_bgcolor="#ffffff",
         paper_bgcolor="#ffffff",
         margin=dict(l=20, r=20, t=50, b=20),
         xaxis=dict(showgrid=True, gridcolor="#f1f5f9", zeroline=False, title="Displacement East-West (km)"),
         yaxis=dict(showgrid=True, gridcolor="#f1f5f9", zeroline=False, title="Displacement North-South (km)"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=11, family="Inter")),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=11, color="#0f172a")),
         height=480
     )
 
@@ -140,13 +140,16 @@ def plot_hospital_network(
 
 def plot_patient_telemetry(timesteps: List[Dict[str, Any]], patient_name: str) -> go.Figure:
     """
-    Renders an interactive physiological telemetry stream (HR, BP, SpO2, Shock Index).
+    Renders continuous physiological telemetry (HR, BP, SpO2) safely without TypeErrors.
     """
-    times = [t["time"] for t in timesteps]
-    hr = [t["hr"] for t in timesteps]
-    sys_bp = [t["sys_bp"] for t in timesteps]
-    dia_bp = [t["dia_bp"] for t in timesteps]
-    spo2 = [t["spo2"] for t in timesteps]
+    if not timesteps:
+        return go.Figure()
+
+    times = [str(t.get("time", f"T{i+1}")) for i, t in enumerate(timesteps)]
+    hr = [float(t.get("hr", 75)) for t in timesteps]
+    sys_bp = [float(t.get("sys_bp", 120)) for t in timesteps]
+    dia_bp = [float(t.get("dia_bp", 80)) for t in timesteps]
+    spo2 = [float(t.get("spo2", 98)) for t in timesteps]
 
     fig = go.Figure()
 
@@ -185,19 +188,19 @@ def plot_patient_telemetry(timesteps: List[Dict[str, Any]], patient_name: str) -
         marker=dict(size=6)
     ))
 
-    # Reference guideline lines
-    fig.add_hline(y=100, line_dash="dot", line_color="rgba(239, 68, 68, 0.3)", annotation_text="Tachycardia (100 bpm)", annotation_font_size=10)
-    fig.add_hline(y=90, line_dash="dot", line_color="rgba(16, 185, 129, 0.3)", annotation_text="Hypoxia Caution (90% SpO2)", annotation_font_size=10)
+    # Reference threshold lines
+    fig.add_hline(y=100, line_dash="dot", line_color="rgba(239, 68, 68, 0.4)", annotation_text="Tachycardia (100 bpm)", annotation_font_size=10)
+    fig.add_hline(y=90, line_dash="dot", line_color="rgba(16, 185, 129, 0.4)", annotation_text="Hypoxia Warning (90% SpO2)", annotation_font_size=10)
 
     fig.update_layout(
-        title=f"Continuous Physiological Telemetry — {patient_name}",
-        title_font=dict(size=13, color="#0f172a", family="Inter"),
-        plot_bgcolor="#fafafa",
+        title=f"Continuous Physiological Telemetry: {patient_name}",
+        title_font=dict(size=13, color="#0f172a", family="Plus Jakarta Sans, sans-serif"),
+        plot_bgcolor="#ffffff",
         paper_bgcolor="#ffffff",
         margin=dict(l=20, r=20, t=50, b=20),
-        xaxis=dict(title="Inspection Window", gridcolor="#f1f5f9"),
-        yaxis=dict(title="Amplitude / Physiological Value", gridcolor="#f1f5f9"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=11, family="Inter")),
+        xaxis=dict(title="Time Inspection Interval", gridcolor="#f1f5f9"),
+        yaxis=dict(title="Physiological Amplitude", gridcolor="#f1f5f9"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=11, color="#0f172a")),
         height=360
     )
 
@@ -208,8 +211,11 @@ def plot_csp_convergence(history: List[Dict[str, Any]]) -> go.Figure:
     """
     Renders the Min-Conflicts local search optimization trajectory.
     """
-    steps = [h["step"] for h in history]
-    conflicts = [h["conflicts"] for h in history]
+    if not history:
+        return go.Figure()
+
+    steps = [int(h.get("step", i)) for i, h in enumerate(history)]
+    conflicts = [int(h.get("conflicts", 0)) for h in history]
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -220,17 +226,17 @@ def plot_csp_convergence(history: List[Dict[str, Any]]) -> go.Figure:
         marker=dict(size=5, color="#0369a1"),
         fill="tozeroy",
         fillcolor="rgba(2, 132, 199, 0.08)",
-        name="Active Constraint Violations"
+        name="Active Violations"
     ))
 
     fig.update_layout(
-        title="Min-Conflicts Optimization: Conflict Reduction Curve",
-        title_font=dict(size=13, color="#0f172a", family="Inter"),
-        plot_bgcolor="#fafafa",
+        title="Min-Conflicts Optimization: Conflict Reduction Trajectory",
+        title_font=dict(size=13, color="#0f172a", family="Plus Jakarta Sans, sans-serif"),
+        plot_bgcolor="#ffffff",
         paper_bgcolor="#ffffff",
         margin=dict(l=20, r=20, t=45, b=20),
         xaxis=dict(title="Search Iteration Step", gridcolor="#f1f5f9"),
-        yaxis=dict(title="Total Violations", gridcolor="#f1f5f9", dtick=1),
+        yaxis=dict(title="Active Conflicts", gridcolor="#f1f5f9", dtick=1),
         height=300
     )
 
@@ -241,19 +247,22 @@ def plot_partial_order_plan(tiers: List[List[Dict[str, Any]]]) -> go.Figure:
     """
     Renders an interactive Gantt timeline for Partial Order Planning.
     """
+    if not tiers:
+        return go.Figure()
+
     tasks = []
     start_time = 0
 
     for tier_idx, tier in enumerate(tiers):
-        tier_duration = max(t["duration_min"] for t in tier)
+        tier_duration = max((int(t.get("duration_min", 0)) for t in tier), default=0)
         for task in tier:
             tasks.append({
-                "Task": task["name"],
-                "Team": task["team"],
+                "Task": str(task.get("name", "Task")),
+                "Team": str(task.get("team", "Clinical Team")),
                 "Tier": f"Stage {tier_idx+1}",
                 "Start": start_time,
-                "Duration": task["duration_min"],
-                "Finish": start_time + task["duration_min"]
+                "Duration": int(task.get("duration_min", 0)),
+                "Finish": start_time + int(task.get("duration_min", 0))
             })
         start_time += tier_duration
 
@@ -267,7 +276,7 @@ def plot_partial_order_plan(tiers: List[List[Dict[str, Any]]]) -> go.Figure:
         "Scrub Nurse": "#059669",
         "Surgical Assistant": "#f59e0b",
         "Trauma Surgeon": "#dc2626",
-        "SICU Transport Team": "#64748b"
+        "SICU Transport Team": "#475569"
     }
 
     for t in tasks:
@@ -285,12 +294,12 @@ def plot_partial_order_plan(tiers: List[List[Dict[str, Any]]]) -> go.Figure:
         ))
 
     fig.update_layout(
-        title="Partial Order Plan: Parallel Multi-Team Surgical Timeline",
-        title_font=dict(size=13, color="#0f172a", family="Inter"),
-        plot_bgcolor="#fafafa",
+        title="Partial Order Plan: Parallel Multi-Team Resuscitation Protocol",
+        title_font=dict(size=13, color="#0f172a", family="Plus Jakarta Sans, sans-serif"),
+        plot_bgcolor="#ffffff",
         paper_bgcolor="#ffffff",
         margin=dict(l=20, r=20, t=45, b=20),
-        xaxis=dict(title="Elapsed Time (Minutes from Arrival)", gridcolor="#f1f5f9"),
+        xaxis=dict(title="Elapsed Minutes from Patient Arrival", gridcolor="#f1f5f9"),
         yaxis=dict(title="", autorange="reversed", gridcolor="#f1f5f9"),
         height=360
     )
