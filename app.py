@@ -2,20 +2,19 @@
 app.py
 ======
 VitalFlow AI: Autonomous Hospital Operations & Emergency Logistics Platform
-A clean, professional multi-agent decision support and state-space optimization system.
+A clean, focused multi-agent decision support and state-space optimization system.
 
-Architecture & Algorithms:
-- Module 1: Heuristic State-Space Graph Search (A* Search vs Greedy Best-First)
-- Module 2: Model-Based Reflex Agent with Internal Temporal State Vector
-- Module 3: Constraint Satisfaction Problem (CSP) with Min-Conflicts Local Search
-- Module 4: Propositional Horn-Clause Forward Chaining & FOL Unification
-- Module 5: Partial Order Planning (POP) with Causal Preconditions
+Core AI Algorithms Implemented:
+1. Informed State-Space Graph Search (A* Search vs Greedy Best-First)
+2. Model-Based Reflex Agent with Internal Temporal State Vector
+3. Constraint Satisfaction Problem (CSP) with Min-Conflicts Local Search
+4. Propositional Horn-Clause Forward Chaining Inference
+5. Partial Order Planning (POP) with Causal Preconditions
 """
 
 import streamlit as st
 import pandas as pd
 import numpy as np
-from typing import List, Tuple
 
 # UI / Styling imports
 from ui.styles import get_custom_css
@@ -37,10 +36,10 @@ from ui.visualizers import (
 from data.hospital_network import HOSPITAL_NODES, ROAD_EDGES, get_network_graph
 from data.patient_cases import PATIENT_TELEMETRY_STREAM, TRIAGE_PRESET_SCENARIOS
 from data.staff_resources import DOCTORS_DIRECTORY, SHIFT_SLOTS
-from core.search_planner import compare_search_algorithms, a_star_search, greedy_best_first_search, dijkstra_search
+from core.search_planner import compare_search_algorithms
 from core.reflex_agents import SimpleReflexAgent, ModelBasedReflexAgent
 from core.csp_scheduler import HospitalDutyCSP
-from core.logic_triage import ClinicalTriageInferenceEngine, match_clinical_duty
+from core.logic_triage import ClinicalTriageInferenceEngine
 from core.partial_order_plan import PartialOrderPlanner
 
 # Page Setup
@@ -55,36 +54,35 @@ st.set_page_config(
 st.markdown(get_custom_css(), unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# SIDEBAR NAVIGATION
+# SIDEBAR NAVIGATION (3 CLEAN SECTIONS ONLY)
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("""
     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-        <div style="width: 32px; height: 32px; border-radius: 8px; background: #0284c7; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">V</div>
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: #0284c7; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem;">V</div>
         <div>
-            <div style="font-weight: 700; font-size: 1.05rem; color: #0f172a; line-height: 1.1;">VitalFlow AI</div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: #0f172a; line-height: 1.1;">VitalFlow AI</div>
             <div style="font-size: 0.75rem; color: #64748b;">Operations Command</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     nav_selection = st.radio(
-        label="Main Navigation",
+        label="Navigation",
         options=[
             "Overview",
             "Emergency Route Planner",
-            "Hospital Operations",
-            "AI Insights & Algorithms"
+            "Hospital Operations"
         ],
         index=0,
         label_visibility="collapsed"
     )
 
     st.markdown("---")
-    st.markdown("<div style='font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 8px;'>ENVIRONMENT SETTINGS</div>", unsafe_allow_html=True)
+    st.markdown("<div style='font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 8px;'>TRAFFIC & ROADS</div>", unsafe_allow_html=True)
     
     traffic_multiplier = st.select_slider(
-        "Urban Traffic Congestion",
+        "Traffic Multiplier",
         options=[1.0, 1.2, 1.5, 2.0, 2.5],
         value=1.2,
         format_func=lambda x: f"{x}x {'(Standard)' if x==1.0 else '(Peak Rush)' if x>=2.0 else '(Moderate)'}"
@@ -94,10 +92,9 @@ with st.sidebar:
     
     st.markdown("---")
     st.markdown("""
-    <div style="font-size: 0.75rem; color: #94a3b8; line-height: 1.4;">
-        <strong>System Status:</strong> Active Simulation<br>
-        <strong>Region:</strong> Nagpur Healthcare Grid<br>
-        <strong>Algorithms:</strong> A*, CSP, Reflex Agents, Horn Logic, POP
+    <div style="font-size: 0.75rem; color: #94a3b8; line-height: 1.5;">
+        <strong>Network:</strong> Nagpur Urban Grid<br>
+        <strong>Active Modules:</strong> A* Route, ICU Reflex Agent, CSP Shift Solver, Triage Horn Logic, POP Surgery
     </div>
     """, unsafe_allow_html=True)
 
@@ -106,19 +103,18 @@ render_top_header()
 
 
 # =============================================================================
-# SECTION 1: OVERVIEW / DASHBOARD
+# 1. OVERVIEW
 # =============================================================================
 if nav_selection == "Overview":
-    # Real metrics derived from data structures
     total_facilities = len(HOSPITAL_NODES)
     total_beds = sum(n["icu_beds"] for n in HOSPITAL_NODES.values())
     trauma_centers = sum(1 for n in HOSPITAL_NODES.values() if n["trauma_ready"])
     
     render_kpi_cards([
-        {"label": "Network Facilities", "value": f"{total_facilities} Centers", "context": "Hospitals & Transit Outposts"},
-        {"label": "Total ICU Beds", "value": f"{total_beds} Beds", "context": "Across Regional Network"},
-        {"label": "Apex Trauma Bays", "value": f"{trauma_centers} Units", "context": "Critical Resuscitation Centers"},
-        {"label": "Traffic Index", "value": f"{traffic_multiplier}x", "context": "Dynamic Congestion Factor"}
+        {"label": "Connected Facilities", "value": f"{total_facilities} Centers", "context": "Hospitals & Emergency Junctions"},
+        {"label": "Network ICU Beds", "value": f"{total_beds} Beds", "context": "Monitored Bed Capacity"},
+        {"label": "Trauma Resus Centers", "value": f"{trauma_centers} Units", "context": "Critical Receiving Facilities"},
+        {"label": "Current Traffic Index", "value": f"{traffic_multiplier}x", "context": "Dynamic Transit Time Factor"}
     ])
 
     st.write("")
@@ -129,7 +125,7 @@ if nav_selection == "Overview":
         st.markdown("""
         <div class="content-card">
             <div class="content-header">Nagpur Healthcare Transit Topology</div>
-            <div class="content-sub">Interactive spatial map showing urban emergency facilities and transit corridors.</div>
+            <div class="content-sub">Interactive spatial map showing emergency hospitals, corridors, and arterial links.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -140,27 +136,27 @@ if nav_selection == "Overview":
     with col_info:
         st.markdown("""
         <div class="content-card">
-            <div class="content-header">System Architecture Summary</div>
-            <div class="content-sub">Core decision-support capabilities active in this instance:</div>
+            <div class="content-header">Operational Workflow</div>
+            <div class="content-sub">How decision support is structured in VitalFlow AI:</div>
             
             <div style="margin-bottom: 14px;">
-                <strong style="color: #0f172a; font-size: 0.88rem;">1. Ambulance Route Optimization</strong><br>
-                <span style="color: #64748b; font-size: 0.82rem;">Informed A* search benchmarked against Greedy Best-First to guarantee minimal transit times during the emergency Golden Hour.</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">1. Ambulance Route Dispatch</strong><br>
+                <span style="color: #64748b; font-size: 0.82rem;">A* Search guarantees minimal transit time to apex hospitals (AIIMS / GMC Nagpur), avoiding road closures via the Outer Ring Road.</span>
             </div>
             
             <div style="margin-bottom: 14px;">
-                <strong style="color: #0f172a; font-size: 0.88rem;">2. ICU Patient Telemetry</strong><br>
-                <span style="color: #64748b; font-size: 0.82rem;">Model-Based Reflex Agent tracking rolling physiological trends (Shock Index, SpO2) to detect sepsis and suppress false alarms.</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">2. Patient Telemetry Monitoring</strong><br>
+                <span style="color: #64748b; font-size: 0.82rem;">Model-Based Reflex Agent tracks continuous physiological trends (Shock Index) to catch early sepsis while suppressing false alarms.</span>
             </div>
             
             <div style="margin-bottom: 14px;">
-                <strong style="color: #0f172a; font-size: 0.88rem;">3. Hospital Staff Scheduling (CSP)</strong><br>
-                <span style="color: #64748b; font-size: 0.82rem;">Min-Conflicts local search resolving doctor duty rosters without concurrent double-booking or fatigue violations.</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">3. Hospital Staff Scheduling</strong><br>
+                <span style="color: #64748b; font-size: 0.82rem;">Constraint Satisfaction Problem (CSP) solved via Min-Conflicts local search to produce 100% conflict-free doctor rosters.</span>
             </div>
             
             <div>
-                <strong style="color: #0f172a; font-size: 0.88rem;">4. Clinical Triage & Surgical Planning</strong><br>
-                <span style="color: #64748b; font-size: 0.82rem;">Propositional Horn-clause forward chaining for emergency triage paired with Partial Order Planning for parallel surgical workflows.</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">4. Emergency Triage & Surgical Protocol</strong><br>
+                <span style="color: #64748b; font-size: 0.82rem;">Propositional forward chaining classifies acuity (ESI 1-5), and Partial Order Planning schedules parallel multi-team surgical steps.</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -169,7 +165,7 @@ if nav_selection == "Overview":
 
 
 # =============================================================================
-# SECTION 2: EMERGENCY ROUTE PLANNER
+# 2. EMERGENCY ROUTE PLANNER
 # =============================================================================
 elif nav_selection == "Emergency Route Planner":
     render_syllabus_pill("Practical 4 & 3", "Optimal Path Using A* Search vs Greedy Best-First Search")
@@ -179,8 +175,8 @@ elif nav_selection == "Emergency Route Planner":
     with col_ctrl:
         st.markdown("""
         <div class="content-card">
-            <div class="content-header">Ambulance Dispatch Control</div>
-            <div class="content-sub">Configure incident origin and destination receiving center.</div>
+            <div class="content-header">Ambulance Dispatch</div>
+            <div class="content-sub">Select emergency incident origin and target receiving hospital.</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -205,11 +201,10 @@ elif nav_selection == "Emergency Route Planner":
         blocked_segments = []
         if simulate_road_closure:
             blocked_segments.append(("Wardha_Road", "Airport_Metro"))
-            render_banner("⚠️ Wardha Road Arterial Link is blocked due to active construction.", "warning")
+            render_banner("⚠️ Wardha Road link is blocked. Rerouting via Outer Ring Road.", "warning")
 
         calc_btn = st.button("Calculate Optimal Routes", type="primary", use_container_width=True)
 
-    # Compute Search
     search_results = compare_search_algorithms(
         start=start_node,
         goal=goal_node,
@@ -230,7 +225,7 @@ elif nav_selection == "Emergency Route Planner":
         )
         st.plotly_chart(fig_route, use_container_width=True)
 
-    # Comparison Metrics
+    # Comparison KPI Cards
     col_m1, col_m2, col_m3 = st.columns(3)
     
     with col_m1:
@@ -242,7 +237,7 @@ elif nav_selection == "Emergency Route Planner":
                 Nodes Expanded: <strong>{a_star['nodes_expanded']}</strong> | Frontier: <strong>{a_star['peak_frontier_size']}</strong>
             </div>
             <div style="font-size: 0.78rem; color: #059669; margin-top: 8px;">
-                Guaranteed optimal route via f(n) = g(n) + h(n).
+                Guaranteed shortest route via f(n) = g(n) + h(n).
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -279,7 +274,6 @@ elif nav_selection == "Emergency Route Planner":
 
     st.write("")
     with st.expander("Search Trace & Priority Queue Decisions (A* Node Expansion Log)"):
-        st.markdown("Detailed step-by-step breakdown of how $f(n) = g(n) + h(n)$ prioritized nodes:")
         df_log = pd.DataFrame(a_star["visited_order"])
         st.dataframe(df_log[["step", "display_name", "g", "h", "f", "explanation"]], use_container_width=True)
 
@@ -287,16 +281,16 @@ elif nav_selection == "Emergency Route Planner":
 
 
 # =============================================================================
-# SECTION 3: HOSPITAL OPERATIONS COMMAND (PATIENT + STAFF + TRIAGE)
+# 3. HOSPITAL OPERATIONS (PATIENT TELEMETRY + STAFF CSP + SURGERY WORKFLOW)
 # =============================================================================
 elif nav_selection == "Hospital Operations":
     ops_tab1, ops_tab2, ops_tab3 = st.tabs([
-        "ICU Telemetry Monitoring",
+        "ICU Patient Monitoring",
         "Staff Duty Scheduling (CSP)",
-        "Emergency Triage Inference"
+        "Emergency Triage & Surgical Protocol"
     ])
 
-    # --- SUB-TAB 1: ICU Telemetry Monitoring ---
+    # --- TAB 1: ICU Telemetry Monitoring (Model-Based Agent) ---
     with ops_tab1:
         render_syllabus_pill("Practical 2 & 1", "Hospital Patient Monitoring Agent (Model-Based vs Simple Reflex)")
 
@@ -388,7 +382,7 @@ elif nav_selection == "Hospital Operations":
             </div>
             """, unsafe_allow_html=True)
 
-    # --- SUB-TAB 2: Staff Duty Scheduling (CSP) ---
+    # --- TAB 2: Staff Duty Scheduling (CSP Min-Conflicts) ---
     with ops_tab2:
         render_syllabus_pill("Practical 5", "Map Coloring for Adjoining Regions using Min-Conflicts (CSP)")
 
@@ -430,203 +424,84 @@ elif nav_selection == "Hospital Operations":
         df_schedule = pd.DataFrame(csp_output["schedule_table"])
         st.dataframe(df_schedule, use_container_width=True)
 
-    # --- SUB-TAB 3: Clinical Triage Inference ---
+    # --- TAB 3: Emergency Triage & Surgical Protocol (Horn Logic + POP) ---
     with ops_tab3:
-        render_syllabus_pill("Practical 7 & 8", "Smart Garden Propositional Logic & Assistant Bot FOL Unification")
+        render_syllabus_pill("Practical 7 & 10", "Propositional Logic Inference & Partial Order Planning")
 
-        triage_sub1, triage_sub2 = st.tabs(["Propositional Forward Chaining", "First-Order Logic Unification"])
-
-        with triage_sub1:
-            col_t1, col_t2 = st.columns([1, 1.8])
-
-            with col_t1:
-                st.markdown("""
-                <div class="content-card">
-                    <div class="content-header">Clinical Presentation</div>
-                    <div class="content-sub">Toggle symptoms to trigger propositional Horn-clause rules.</div>
-                </div>
-                """, unsafe_allow_html=True)
-
-                scenario_sel = st.selectbox(
-                    "Clinical Preset Scenarios",
-                    options=["Custom Evaluation"] + list(TRIAGE_PRESET_SCENARIOS.keys())
-                )
-
-                if scenario_sel != "Custom Evaluation":
-                    sc_data = TRIAGE_PRESET_SCENARIOS[scenario_sel]
-                    sym_airway = st.checkbox("Severe Airway Compromise", value=sc_data.get("severe_airway_compromise", False))
-                    sym_bleed = st.checkbox("Active Massive Hemorrhage", value=sc_data.get("active_massive_hemorrhage", False))
-                    sym_chest = st.checkbox("Chest Pain with Diaphoresis (STEMI)", value=sc_data.get("chest_pain_diaphoresis", False))
-                    sym_stroke = st.checkbox("Acute Focal Deficit (Stroke Window)", value=sc_data.get("suspected_stroke_symptoms", False))
-                    sym_unstable = st.checkbox("Physiological Vitals Unstable", value=sc_data.get("vital_signs_unstable", False))
-                    sym_fever = st.checkbox("High-Grade Fever with Lethargy", value=sc_data.get("high_fever_lethargy", False))
-                    sym_mild = st.checkbox("Superficial Laceration / Sprain", value=sc_data.get("mild_abrasion", False))
-                else:
-                    sym_airway = st.checkbox("Severe Airway Compromise", value=False)
-                    sym_bleed = st.checkbox("Active Massive Hemorrhage", value=False)
-                    sym_chest = st.checkbox("Chest Pain with Diaphoresis (STEMI)", value=True)
-                    sym_stroke = st.checkbox("Acute Focal Deficit (Stroke Window)", value=False)
-                    sym_unstable = st.checkbox("Physiological Vitals Unstable", value=True)
-                    sym_fever = st.checkbox("High-Grade Fever with Lethargy", value=False)
-                    sym_mild = st.checkbox("Superficial Laceration / Sprain", value=False)
-
-                facts = []
-                if sym_airway: facts.append("severe_airway_compromise")
-                if sym_bleed: facts.append("active_massive_hemorrhage")
-                if sym_chest: facts.append("chest_pain_diaphoresis")
-                if sym_stroke: facts.append("suspected_stroke_symptoms")
-                if sym_unstable: facts.append("vital_signs_unstable")
-                if sym_fever: facts.append("high_fever_lethargy")
-                if sym_mild: facts.append("mild_abrasion")
-
-            engine = ClinicalTriageInferenceEngine()
-            triage_out = engine.forward_chain(facts)
-
-            with col_t2:
-                st.markdown(f"""
-                <div class="kpi-card" style="border-top: 3px solid #0284c7; margin-bottom: 16px;">
-                    <div class="kpi-label">Inferred Emergency Acuity</div>
-                    <div style="font-size: 1.4rem; font-weight: 700; color: #0f172a; margin: 6px 0;">
-                        {triage_out['final_esi_level']}
-                    </div>
-                    <div style="font-size: 0.88rem; color: #0284c7; font-weight: 600;">
-                        Target Bay: {triage_out['assigned_bay']}
-                    </div>
-                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">
-                        Derived via {triage_out['rules_fired_count']} Horn clauses using Modus Ponens forward deduction.
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
-                st.markdown("#### Logical Proof Trace")
-                if triage_out["firing_history"]:
-                    for step in triage_out["firing_history"]:
-                        st.markdown(f"""
-                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;">
-                            <strong style="color: #0284c7; font-size: 0.85rem;">Step {step['step']}: Rule [{step['rule']}] Fired</strong><br>
-                            <code style="font-size: 0.8rem; color: #0f172a;">{' ∧ '.join(step['antecedents'])} ⇒ {step['consequent']}</code><br>
-                            <span style="font-size: 0.78rem; color: #64748b;">{step['explanation']}</span>
-                        </div>
-                        """, unsafe_allow_html=True)
-                else:
-                    st.info("No acute rules satisfied. Patient categorized under routine observation.")
-
-        with triage_sub2:
-            st.markdown("""
-            <div class="content-card">
-                <div class="content-header">First-Order Logic Unification Matcher</div>
-                <div class="content-sub">Matches patient specialty requirements with available attending physicians.</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            col_up, col_ud = st.columns(2)
-            with col_up:
-                p_pred = st.text_input("Patient Demand Predicate", value="NeedsSpecialist(P-101, Cardiology, ?shift)")
-            with col_ud:
-                d_pred = st.text_input("Physician Availability Predicate", value="NeedsSpecialist(?patient, ?spec, Morning)")
-
-            p_tokens = [t.strip() for t in p_pred.replace("(", ",").replace(")", "").split(",")]
-            d_tokens = [t.strip() for t in d_pred.replace("(", ",").replace(")", "").split(",")]
-
-            unif = match_clinical_duty(p_tokens, d_tokens)
-            if unif["unification_success"]:
-                render_banner("Unification Successful: Most General Unifier (MGU θ) found.", "success")
-                st.json(unif["most_general_unifier"])
-            else:
-                render_banner("Unification Failed: No valid substitution exists.", "danger")
-
-    render_academic_disclaimer()
-
-
-# =============================================================================
-# SECTION 4: AI INSIGHTS & ALGORITHM LAB
-# =============================================================================
-elif nav_selection == "AI Insights & Algorithms":
-    st.markdown("""
-    <div class="content-card">
-        <div class="content-header">AI Architecture & Algorithm Foundations</div>
-        <div class="content-sub">In-depth mathematical formulation and theoretical analysis of all implemented AI concepts.</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    tab_pop, tab_comp, tab_allpairs = st.tabs([
-        "Partial Order Planning (Trauma Surgery)",
-        "Theoretical Complexity Comparison",
-        "Network-Wide Pathfinding Stress Test"
-    ])
-
-    with tab_pop:
-        render_syllabus_pill("Practical 10", "Kitchen Task Planner for Anaya (Partial Order Planning)")
-
-        col_pop_txt, col_pop_chart = st.columns([1, 2])
-
-        with col_pop_txt:
-            st.markdown("""
-            <div class="content-card">
-                <div class="content-header">Trauma Surgery Protocol</div>
-                <div class="content-sub">Non-linear parallel task sequencing using causal links.</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.markdown("""
-            **Why Partial Order Planning?**
-            * **Linear Planning Flaw:** Forces all actions into a rigid line ($A_1 \\to A_2 \\to A_3$), creating bottlenecks.
-            * **POP Parallelism:** Actions are ordered only when causal dependencies require it. For example, Nursing establishes IV access while Scrub Techs sterilize instruments **concurrently**.
-            """)
-
-            pop_engine = PartialOrderPlanner()
-            pop_plan = pop_engine.generate_plan()
-
-            st.markdown(f"""
-            <div class="kpi-card" style="margin-top: 14px;">
-                <div class="kpi-label">Estimated Critical Path</div>
-                <div class="kpi-value">{pop_plan['estimated_critical_path_minutes']} min</div>
-                <div class="kpi-context">Structured across {len(pop_plan['execution_tiers'])} Parallel Stages</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-        with col_pop_chart:
-            fig_pop = plot_partial_order_plan(pop_plan["execution_tiers"])
-            st.plotly_chart(fig_pop, use_container_width=True)
-
-        st.markdown("### Causal Link Dependencies")
-        df_causal = pd.DataFrame(pop_plan["causal_links"])
-        st.dataframe(df_causal[["from_action", "condition", "to_action", "from_name", "to_name"]], use_container_width=True)
-
-    with tab_comp:
-        st.markdown("### Complexity & Theoretical Analysis")
-        theory_table = [
-            {"Algorithm": "A* Search", "Evaluation Function": "f(n) = g(n) + h(n)", "Time Complexity": "O(b^d)", "Space Complexity": "O(b^d)", "Optimality": "Guaranteed (h is admissible)", "Completeness": "Complete"},
-            {"Algorithm": "Greedy Best-First", "Evaluation Function": "f(n) = h(n)", "Time Complexity": "O(b^m)", "Space Complexity": "O(b^m)", "Optimality": "Not Guaranteed (Suboptimal)", "Completeness": "Incomplete without cycle check"},
-            {"Algorithm": "Dijkstra (UCS)", "Evaluation Function": "f(n) = g(n)", "Time Complexity": "O(b^(C*/ε))", "Space Complexity": "O(b^(C*/ε))", "Optimality": "Guaranteed", "Completeness": "Complete"},
-            {"Algorithm": "Min-Conflicts Local Search", "Evaluation Function": "arg min conflicts(var = v)", "Time Complexity": "O(k · n)", "Space Complexity": "O(n)", "Optimality": "Conflict-Free Satisficing", "Completeness": "Incomplete (mitigated by restarts)"},
-            {"Algorithm": "Model-Based Reflex Agent", "Evaluation Function": "S_{t+1} = Update(S_t, P_{t+1})", "Time Complexity": "O(1) per percept", "Space Complexity": "O(k) rolling history", "Optimality": "High Signal-to-Noise Ratio", "Completeness": "Deterministic"},
-            {"Algorithm": "Partial Order Planning", "Evaluation Function": "Causal Links & Ordering", "Time Complexity": "NP-Hard in general", "Space Complexity": "O(|Actions| + |Links|)", "Optimality": "Shortest Parallel Schedule", "Completeness": "Complete"}
-        ]
-        st.dataframe(pd.DataFrame(theory_table), use_container_width=True)
-
-    with tab_allpairs:
-        st.markdown("### All-Pairs Pathfinding Benchmark (Sitabuldi to All Facilities)")
-        st.markdown("Run live comparisons across the entire network graph to evaluate A* versus Greedy Best-First.")
+        # Top half: Propositional Logic Triage
+        st.markdown("### 1. Emergency Clinical Triage (Horn-Clause Forward Chaining)")
         
-        if st.button("Run Full Network Benchmark"):
-            graph = get_network_graph(traffic_multiplier=traffic_multiplier)
-            bench_data = []
-            for dest in HOSPITAL_NODES:
-                if dest == "Sitabuldi":
-                    continue
-                a_res = a_star_search("Sitabuldi", dest, graph)
-                g_res = greedy_best_first_search("Sitabuldi", dest, graph)
-                d_res = dijkstra_search("Sitabuldi", dest, graph)
-                bench_data.append({
-                    "Destination": HOSPITAL_NODES[dest]["name"],
-                    "A* Time (min)": a_res["total_cost_minutes"],
-                    "A* Nodes": a_res["nodes_expanded"],
-                    "Greedy Time (min)": g_res["total_cost_minutes"],
-                    "Greedy Nodes": g_res["nodes_expanded"],
-                    "Dijkstra Time (min)": d_res["total_cost_minutes"],
-                    "Greedy Suboptimal?": "Suboptimal Detour" if g_res["total_cost_minutes"] > a_res["total_cost_minutes"] else "Matches A*"
-                })
-            st.dataframe(pd.DataFrame(bench_data), use_container_width=True)
+        col_t1, col_t2 = st.columns([1, 1.8])
+
+        with col_t1:
+            scenario_sel = st.selectbox(
+                "Clinical Presentation Preset",
+                options=["Custom Evaluation"] + list(TRIAGE_PRESET_SCENARIOS.keys())
+            )
+
+            if scenario_sel != "Custom Evaluation":
+                sc_data = TRIAGE_PRESET_SCENARIOS[scenario_sel]
+                sym_airway = st.checkbox("Severe Airway Compromise", value=sc_data.get("severe_airway_compromise", False))
+                sym_bleed = st.checkbox("Active Massive Hemorrhage", value=sc_data.get("active_massive_hemorrhage", False))
+                sym_chest = st.checkbox("Chest Pain with Diaphoresis (STEMI)", value=sc_data.get("chest_pain_diaphoresis", False))
+                sym_stroke = st.checkbox("Acute Focal Deficit (Stroke Window)", value=sc_data.get("suspected_stroke_symptoms", False))
+                sym_unstable = st.checkbox("Physiological Vitals Unstable", value=sc_data.get("vital_signs_unstable", False))
+            else:
+                sym_airway = st.checkbox("Severe Airway Compromise", value=False)
+                sym_bleed = st.checkbox("Active Massive Hemorrhage", value=False)
+                sym_chest = st.checkbox("Chest Pain with Diaphoresis (STEMI)", value=True)
+                sym_stroke = st.checkbox("Acute Focal Deficit (Stroke Window)", value=False)
+                sym_unstable = st.checkbox("Physiological Vitals Unstable", value=True)
+
+            facts = []
+            if sym_airway: facts.append("severe_airway_compromise")
+            if sym_bleed: facts.append("active_massive_hemorrhage")
+            if sym_chest: facts.append("chest_pain_diaphoresis")
+            if sym_stroke: facts.append("suspected_stroke_symptoms")
+            if sym_unstable: facts.append("vital_signs_unstable")
+
+        engine = ClinicalTriageInferenceEngine()
+        triage_out = engine.forward_chain(facts)
+
+        with col_t2:
+            st.markdown(f"""
+            <div class="kpi-card" style="border-top: 3px solid #0284c7; margin-bottom: 12px;">
+                <div class="kpi-label">Inferred Emergency Acuity</div>
+                <div style="font-size: 1.35rem; font-weight: 700; color: #0f172a; margin: 4px 0;">
+                    {triage_out['final_esi_level']}
+                </div>
+                <div style="font-size: 0.86rem; color: #0284c7; font-weight: 600;">
+                    Target Department: {triage_out['assigned_bay']}
+                </div>
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">
+                    Derived via {triage_out['rules_fired_count']} Horn clauses using Modus Ponens forward deduction.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if triage_out["firing_history"]:
+                for step in triage_out["firing_history"]:
+                    st.markdown(f"""
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 12px; margin-bottom: 6px; font-size: 0.8rem;">
+                        <strong style="color: #0284c7;">Rule [{step['rule']}]:</strong> <code>{' ∧ '.join(step['antecedents'])} ⇒ {step['consequent']}</code>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        st.write("")
+        st.markdown("---")
+
+        # Bottom half: Partial Order Planning for Trauma Surgery
+        st.markdown("### 2. Trauma Resuscitation Protocol (Partial Order Planning)")
+        st.markdown("Rather than rigid linear sequencing, Partial Order Planning coordinates independent clinical tasks in parallel.")
+
+        pop_engine = PartialOrderPlanner()
+        pop_plan = pop_engine.generate_plan()
+
+        fig_pop = plot_partial_order_plan(pop_plan["execution_tiers"])
+        st.plotly_chart(fig_pop, use_container_width=True)
+
+        with st.expander("View POP Causal Preconditions & Link Dependencies"):
+            df_causal = pd.DataFrame(pop_plan["causal_links"])
+            st.dataframe(df_causal[["from_action", "condition", "to_action", "from_name", "to_name"]], use_container_width=True)
 
     render_academic_disclaimer()
